@@ -127,8 +127,8 @@ class ResizableGridCanvas(Canvas):
         self.create_rectangle(x, y,
                               x + self._cell_size,
                               y + self._cell_size,
-                              fill
-                              =self.grid.grid[(grid_x, grid_y)])
+                              fill=self.grid.grid[(grid_x, grid_y)],
+                              outline="")
 
     def _draw_bg(self, color="black", alt_color="white"):
         self.create_rectangle(0, 0, self.width, self.height, fill=alt_color)
