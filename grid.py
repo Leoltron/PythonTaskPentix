@@ -69,7 +69,6 @@ class ResizableGridCanvas(Canvas):
     def on_resize(self, event):
         self.width = event.width
         self.height = event.height
-        # self.config(width=self.width, height=self.height)
         self.update_size()
 
     def update_size(self):
