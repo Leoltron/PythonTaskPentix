@@ -77,12 +77,23 @@ class Figure:
                 return True
         return False
 
+    def __ne__(self, other):
+        return not self == other
 
+    def __repr__(self):
+        return "Figure({})".format(self.rotations[0])
+
+print("f = {")
 for i in range(1, 11):
     figures = list()
     l = 0
+    print("    {}:".format(i))
+    print("    [")
     for figure in generate_figures(i):
         l += 1
         if figure not in figures:
             figures.append(figure)
-    print("{}: {} => {}".format(i, l, len(figures)))
+            print("        "+repr(figure)+",")
+    print("#{}: {} => {}".format(i, l, len(figures)))
+    print("    ],")
+print("}")
