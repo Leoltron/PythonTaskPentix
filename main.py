@@ -2,6 +2,8 @@
 import functools
 import random
 from tkinter import *
+
+from generated_figures import get_figures
 from grid import *
 from figures import *
 
@@ -42,26 +44,25 @@ def rotate(event):
 root.bind("<Key>", rotate)
 refresh()
 """
-figures = list()
-for figure in generate_figures(6):
-    if figure not in figures:
-        figures.append(figure)
+figures = get_figures(5)
 i = 0
 
 
 def game_loop():
     global figures
     global i
-    root.title('Pentrix - '+str(i))
+    root.title('Pentrix - ' + str(i))
     for coord in color_grid.grid:
-        color_grid.grid[coord] = color_grid.default_cell_color
-    figure = figures[i].get_points()
+        color_grid.grid[coord] = None
+    figure = figures[10].get_points()
     for coord in figure:
         color_grid.grid[coord] = "blue"
     i = (i + 1) % len(figures)
     grid_canvas.redraw()
 
-    root.after(100, game_loop)
+def on_key_pressed(event):
+    game_loop()
 
+root.bind("<Key>", on_key_pressed)
 game_loop()
 root.mainloop()

@@ -1,6 +1,5 @@
-from copy import deepcopy
-
 import sys
+
 
 def get_clockwise_rotated_figure(figure):
     rotated_figure = set()
@@ -48,6 +47,14 @@ def generate_figures(squares_amount, prev_squares=[(0, 0)]):
         yield Figure(set(prev_squares))
 
 
+def generate_figures_cleared(squares_amount):
+    figures = list()
+    for figure in generate_figures(squares_amount):
+        if figure not in figures:
+            figures.append(figure)
+    return figures
+
+
 def get_neighbours(x, y, blacklist_points=[]):
     neighbours = []
     for dx in range(-1, 2):
@@ -66,6 +73,13 @@ class Figure:
     def get_points(self):
         return self.rotations[self.rotation_index]
 
+    def get_points_dx_dy(self, dx, dy):
+        points = self.get_points()
+        moved_points = set()
+        for point in points:
+            moved_points.add((point[0] + dx, point[1] + dy))
+        return moved_points
+
     def rotate(self):
         self.rotation_index = (self.rotation_index + 1) % len(self.rotations)
 
@@ -82,18 +96,3 @@ class Figure:
 
     def __repr__(self):
         return "Figure({})".format(self.rotations[0])
-
-print("f = {")
-for i in range(1, 11):
-    figures = list()
-    l = 0
-    print("    {}:".format(i))
-    print("    [")
-    for figure in generate_figures(i):
-        l += 1
-        if figure not in figures:
-            figures.append(figure)
-            print("        "+repr(figure)+",")
-    print("#{}: {} => {}".format(i, l, len(figures)))
-    print("    ],")
-print("}")
