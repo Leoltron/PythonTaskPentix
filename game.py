@@ -29,25 +29,34 @@ class Game:
                  grid_height=30,
                  figures_types={5},
                  balance_types=False,
-                 cell_colors=["blue", "red", "green", "yellow"]):
+                 cell_colors=["blue", "red", "green", "yellow"],
+                 grid_canvas=None):
         self.figures = FiguresList(figures_types=figures_types,
                                    balance_types=balance_types)
         self.cell_colors = cell_colors
+        self.connect_to_grid_canvas(grid_canvas)
+        self.restart_game(grid_width, grid_height)
+
+    def connect_to_grid_canvas(self, grid_canvas):
+        self.grid_canvas = grid_canvas
+
+    def restart_game(self, grid_width, grid_height):
         self.grid = ColorGrid(grid_width, grid_height)
+        if self.grid_canvas:
+            self.grid_canvas.grid = self.grid
         self._get_new_figure()
 
     def _get_new_figure(self):
-        print("new_figure")
         self._current_figure = self.figures.get_random_figure()
-        self._current_figure_width = \
+        current_figure_width = \
             max(self._current_figure.get_points(), key=lambda p: p[0])[0] + 1
-        self._current_figure_height = \
+        current_figure_height = \
             max(self._current_figure.get_points(), key=lambda p: p[1])[1] + 1
 
         self.current_figure_x = random.randint(0,
                                                self.grid.width -
-                                               self._current_figure_width)
-        self.current_figure_y = -self._current_figure_height
+                                               current_figure_width)
+        self.current_figure_y = -current_figure_height
 
         self.current_figure_color = random.choice(self.cell_colors)
         for x, y in self._current_figure.get_points_dx_dy(
@@ -60,6 +69,13 @@ class Game:
         new_figure_coords = self._current_figure.get_points_dx_dy(
             self.current_figure_x + dx, self.current_figure_y + dy
         )
+        result = self._try_replace(figure_coords, new_figure_coords)
+        if result:
+            self.current_figure_x += dx
+            self.current_figure_y += dy
+        return result
+
+    def _try_replace(self, figure_coords, new_figure_coords):
         for coords in new_figure_coords:
             if not (0 <= coords[0] < self.grid.width and
                             coords[1] < self.grid.height):
@@ -71,8 +87,6 @@ class Game:
             self.grid.grid[coords] = None
         for coords in new_figure_coords:
             self.grid.grid[coords] = self.current_figure_color
-        self.current_figure_x += dx
-        self.current_figure_y += dy
         return True
 
     def try_move_left(self):
@@ -96,16 +110,34 @@ class Game:
                         self.grid.grid[(x, y)] = self.grid.grid[(x, y - 1)]
                         self.grid.grid[(x, y - 1)] = None
 
+    def check_for_loss(self):
+        for x, y in self.grid.grid:
+            if y < 0 and self.grid.grid[x, y]:
+                self.restart_game(self.grid.width, self.grid.height)
+                return True
+        return False
+
     def loop(self):
         if not self.try_move_down():
-            self.check_for_completed_lines()
-            self._get_new_figure()
+            self.summarize_figure_flight()
 
     def try_rotate(self):
-        # TODO: Поворот фигуры
-        pass
+        figure_coords = self._current_figure.get_points_dx_dy(
+            self.current_figure_x, self.current_figure_y)
+        rotated_figure_coords = self._current_figure.get_rotated_points_dx_dy(
+            self.current_figure_x, self.current_figure_y
+        )
+        result = self._try_replace(figure_coords, rotated_figure_coords)
+        if result:
+            self._current_figure.rotate()
+        return result
 
     def drop_current_figure(self):
         while self.try_move_down():
             pass
-        self._get_new_figure()
+        self.summarize_figure_flight()
+
+    def summarize_figure_flight(self):
+        if not self.check_for_loss():
+            self.check_for_completed_lines()
+            self._get_new_figure()

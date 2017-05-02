@@ -5,6 +5,13 @@ from tkinter import *
 from game import Game
 from grid import *
 
+
+def mix_colors(color1, color2):
+    if not (isinstance(color1, int) and isinstance(color2, int)):
+        raise TypeError("Colors must be integers!")
+    return (color1 + color2) / 2
+
+
 root = Tk()
 root.title('Pentrix')
 root.minsize(200, 200)
@@ -15,11 +22,12 @@ game = Game(grid_width=10,
             grid_height=20,
             figures_types={4},
             balance_types=False,
-            cell_colors=["blue", "red", "green", "yellow"])
+            cell_colors=["green"])
 grid_canvas = ResizableGridCanvas(root,
                                   game.grid,
                                   width=200,
                                   height=200)
+game.connect_to_grid_canvas(grid_canvas)
 grid_canvas.pack(expand=YES, fill=BOTH)
 
 update_period = 1000
@@ -34,7 +42,9 @@ def try_and_call(func):
                 func()
 
         return new_f
+
     return try_and_call_func
+
 
 def game_loop():
     global paused
@@ -42,7 +52,6 @@ def game_loop():
         global update_period
         game.loop()
         grid_canvas.redraw()
-        print(game.current_figure_x, game.current_figure_y)
     root.after(update_period, game_loop)
 
 

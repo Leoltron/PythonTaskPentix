@@ -74,7 +74,14 @@ class Figure:
         return self.rotations[self.rotation_index]
 
     def get_points_dx_dy(self, dx, dy):
-        points = self.get_points()
+        return self._get_rotation_points_dx_dy(self.rotation_index, dx, dy)
+
+    def get_rotated_points_dx_dy(self, dx, dy):
+        rotation_index = (self.rotation_index + 1) % len(self.rotations)
+        return self._get_rotation_points_dx_dy(rotation_index, dx, dy)
+
+    def _get_rotation_points_dx_dy(self, rotation_index, dx, dy):
+        points = self.rotations[rotation_index]
         moved_points = set()
         for point in points:
             moved_points.add((point[0] + dx, point[1] + dy))
