@@ -27,24 +27,15 @@ class Game:
     def __init__(self,
                  grid_width=15,
                  grid_height=30,
-                 figures_types={5},
+                 figure_types={5},
                  balance_types=False,
                  cell_colors=["blue", "red", "green", "yellow"],
                  grid_canvas=None):
-        self.figures = FiguresList(figures_types=figures_types,
+        self.figures = FiguresList(figures_types=figure_types,
                                    balance_types=balance_types)
         self.cell_colors = cell_colors
-        self.connect_to_grid_canvas(grid_canvas)
-        self.restart_game(grid_width, grid_height)
-
-    def connect_to_grid_canvas(self, grid_canvas):
-        self.grid_canvas = grid_canvas
-
-    def restart_game(self, grid_width, grid_height):
         self.grid = ColorGrid(grid_width, grid_height)
-        if self.grid_canvas:
-            self.grid_canvas.grid = self.grid
-        self._get_new_figure()
+        self._max_figure_size = max(figure_types)
 
     def _get_new_figure(self):
         self._current_figure = self.figures.get_random_figure()
@@ -59,14 +50,14 @@ class Game:
         self.current_figure_y = -current_figure_height
 
         self.current_figure_color = random.choice(self.cell_colors)
-        for x, y in self._current_figure.get_points_dx_dy(
+        for x, y in self._current_figure.get_points_moved(
                 self.current_figure_x, self.current_figure_y):
             self.grid.grid[(x, y)] = self.current_figure_color
 
     def _try_move(self, dx, dy):
-        figure_coords = self._current_figure.get_points_dx_dy(
+        figure_coords = self._current_figure.get_points_moved(
             self.current_figure_x, self.current_figure_y)
-        new_figure_coords = self._current_figure.get_points_dx_dy(
+        new_figure_coords = self._current_figure.get_points_moved(
             self.current_figure_x + dx, self.current_figure_y + dy
         )
         result = self._try_replace(figure_coords, new_figure_coords)
@@ -122,7 +113,7 @@ class Game:
             self.summarize_figure_flight()
 
     def try_rotate(self):
-        figure_coords = self._current_figure.get_points_dx_dy(
+        figure_coords = self._current_figure.get_points_moved(
             self.current_figure_x, self.current_figure_y)
         rotated_figure_coords = self._current_figure.get_rotated_points_dx_dy(
             self.current_figure_x, self.current_figure_y
