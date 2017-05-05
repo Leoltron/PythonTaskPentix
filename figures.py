@@ -44,7 +44,7 @@ def get_rotations(figure):
 
 def generate_figures(squares_amount, prev_squares=[(0, 0)]):
     """
-     Generates a list of figures of the same size with possible collisions
+        Generates a list of figures of the same size with possible collisions
     """
     if len(prev_squares) < squares_amount:
         for start_square in prev_squares:
