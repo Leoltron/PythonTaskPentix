@@ -1,6 +1,10 @@
 from figures import Figure
 
 
+def get_available_figure_sizes():
+    return [1, 2, 3, 4, 5, 6]
+
+
 def get_figures(figure_size):
     if figure_size == 1:
         return [Figure({(0, 0)})]

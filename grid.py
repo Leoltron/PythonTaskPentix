@@ -14,10 +14,10 @@ class ColorGrid:
         check_for_positive_integer(height, "Height")
         self._width = width
         self._height = height
-        self._grid = dict()
+        self.grid = dict()
         for x in range(width):
             for y in range(height):
-                self._grid[(x, y)] = None
+                self.grid[(x, y)] = None
 
     @property
     def width(self):
@@ -27,23 +27,6 @@ class ColorGrid:
     def height(self):
         return self._height
 
-    @property
-    def line_color(self):
-        return self._line_color
-
-    @property
-    def grid(self):
-        return self._grid
-
-    @grid.setter
-    def grid(self, value):
-        self._grid = dict()
-        for x in range(self._width):
-            for y in range(self._height):
-                self._grid[(x, y)] = None
-        for coords, color in value.items():
-            self._grid[coords] = color
-
     def is_line_full(self, line_number):
         if not 0 <= line_number < self.height:
             return False
@@ -51,6 +34,10 @@ class ColorGrid:
             if not self.grid[(x, line_number)]:
                 return False
         return True
+
+    def clear(self):
+        for coords in self.grid:
+            self.grid[coords] = None
 
 
 class ResizableGridCanvas(Canvas):

@@ -2,6 +2,9 @@ import sys
 
 
 def get_clockwise_rotated_figure(figure):
+    """
+    :return: Points of the figure rotated on 90 degrees clockwise 
+    """
     rotated_figure = set()
     for x, y in figure:
         rotated_figure.add((y, -x))
@@ -9,6 +12,9 @@ def get_clockwise_rotated_figure(figure):
 
 
 def get_normalized_figure(figure):
+    """
+    :return: Figure "moved" to the left upper corner
+    """
     minx = sys.maxsize
     miny = sys.maxsize
     for x, y in figure:
@@ -23,6 +29,9 @@ def get_normalized_figure(figure):
 
 
 def get_rotations(figure):
+    """
+    :return: All possible figure rotations 
+    """
     rotations = [figure]
     while True:
         rotation = get_normalized_figure(
@@ -34,6 +43,9 @@ def get_rotations(figure):
 
 
 def generate_figures(squares_amount, prev_squares=[(0, 0)]):
+    """
+        Generates a list of figures of the same size with possible collisions
+    """
     if len(prev_squares) < squares_amount:
         for start_square in prev_squares:
             for neighbour in get_neighbours(
@@ -48,6 +60,9 @@ def generate_figures(squares_amount, prev_squares=[(0, 0)]):
 
 
 def generate_figures_cleared(squares_amount):
+    """
+        Generates a list of figures of the same size without collisions
+    """
     figures = list()
     for figure in generate_figures(squares_amount):
         if figure not in figures:
@@ -71,16 +86,30 @@ class Figure:
         self.rotation_index = 0
 
     def get_points(self):
+        """
+        :return: Normalized figure points 
+        """
         return self.rotations[self.rotation_index]
 
-    def get_points_dx_dy(self, dx, dy):
-        return self._get_rotation_points_dx_dy(self.rotation_index, dx, dy)
+    def get_points_moved(self, x, y):
+        """
+        :return: Points of figure moved on (x,y) position
+        """
+        return self._get_rotation_points_dx_dy(self.rotation_index, x, y)
 
     def get_rotated_points_dx_dy(self, dx, dy):
+        """
+        :return: Points of figure moved on (x,y) position 
+        and rotated on 90 degrees
+        """
         rotation_index = (self.rotation_index + 1) % len(self.rotations)
         return self._get_rotation_points_dx_dy(rotation_index, dx, dy)
 
     def _get_rotation_points_dx_dy(self, rotation_index, dx, dy):
+        """
+        :return: Points of figure moved on (x,y) position 
+        on specified rotation
+        """
         points = self.rotations[rotation_index]
         moved_points = set()
         for point in points:
@@ -88,6 +117,9 @@ class Figure:
         return moved_points
 
     def rotate(self):
+        """
+        Moves rotation index
+        """
         self.rotation_index = (self.rotation_index + 1) % len(self.rotations)
 
     def __eq__(self, other):

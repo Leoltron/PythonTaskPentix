@@ -2,7 +2,7 @@
 
 import unittest
 import figures
-from generated_figures import get_figures
+import generated_figures
 
 
 def is_iterable(obj):
@@ -143,19 +143,19 @@ class TestFigures(unittest.TestCase):
                                                     rotations_expected))
 
     def test_generated_figures_available(self):
-        for i in range(1, 7):
-            get_figures(i)
+        for i in generated_figures.get_available_figure_sizes():
+            generated_figures.get_figures(i)
 
     def test_generate_figures(self):
         figure_size = 5
-        expected = list(get_figures(figure_size))
+        expected = list(generated_figures.get_figures(figure_size))
         actual = list(figures.generate_figures_cleared(figure_size))
 
         self.assertTrue(is_iterables_equal_no_order(expected, actual))
 
     def test_generate_figures_wrong_size(self):
-        self.assertRaises(ValueError, get_figures, [-10])
-        self.assertRaises(ValueError, get_figures, [10])
+        self.assertRaises(ValueError, generated_figures.get_figures, [-10])
+        self.assertRaises(ValueError, generated_figures.get_figures, [10])
 
 
 class TestFigureClass(unittest.TestCase):
@@ -175,7 +175,7 @@ class TestFigureClass(unittest.TestCase):
         dy = 5
         rotations_moved = [{(0 + dx, 0 + dy), (1 + dx, 0 + dy)},
                            {(0 + dx, 0 + dy), (0 + dx, 1 + dy)}]
-        self.assertIn(figure.get_points_dx_dy(dx, dy), rotations_moved)
+        self.assertIn(figure.get_points_moved(dx, dy), rotations_moved)
 
     def test_rotate(self):
         rotations = [{(0, 0), (1, 0)}, {(0, 0), (0, 1)}]
