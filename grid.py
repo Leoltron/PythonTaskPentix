@@ -58,7 +58,7 @@ class ResizableGridCanvas(Canvas):
                  line_color="white",
                  bg_color="black",
                  **kwargs):
-        Canvas.__init__(self, parent, **kwargs)
+        super().__init__(parent, **kwargs)
         self.bind("<Configure>", self.on_resize)
         self.height = self.winfo_reqheight()
         self.width = self.winfo_reqwidth()
@@ -99,6 +99,7 @@ class ResizableGridCanvas(Canvas):
                         self.grid.height - 1)
 
     def redraw(self):
+        self.delete('all')
         self._draw_bg(self.bg_color)
         x = self._left
         for grid_x in range(self.grid.width):
