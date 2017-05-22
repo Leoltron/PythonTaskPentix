@@ -1,6 +1,45 @@
 import random
-from generated_figures import get_figures
-from grid import ColorGrid
+
+from game.generated_figures import get_figures
+
+
+def check_for_positive_integer(value, value_name="Value"):
+    if not isinstance(value, int):
+        raise TypeError(value_name + " must be integer!")
+    if value <= 0:
+        raise ValueError(value_name + " must be positive!")
+
+
+class ColorGrid:
+    def __init__(self, width, height):
+        check_for_positive_integer(width, "Width")
+        check_for_positive_integer(height, "Height")
+        self._width = width
+        self._height = height
+        self.grid = dict()
+        for x in range(width):
+            for y in range(height):
+                self.grid[(x, y)] = None
+
+    @property
+    def width(self):
+        return self._width
+
+    @property
+    def height(self):
+        return self._height
+
+    def is_line_full(self, line_number):
+        if not 0 <= line_number < self.height:
+            return False
+        for x in range(self.width):
+            if not self.grid[(x, line_number)]:
+                return False
+        return True
+
+    def clear(self):
+        for coords in self.grid:
+            self.grid[coords] = None
 
 
 class FiguresList:
@@ -22,18 +61,21 @@ class FiguresList:
             return random.choice(self._figures)
 
 
-class Game:
+class PentrixGame:
     def __init__(self,
                  grid_width=15,
                  grid_height=30,
                  figure_types={5},
                  balance_types=False,
-                 cell_colors=["blue", "red", "green", "yellow"]):
+                 cell_colors=None):
+        if cell_colors is None:
+            cell_colors = ["blue", "red", "green", "yellow"]
         self.figures = FiguresList(figures_types=figure_types,
                                    balance_types=balance_types)
         self.cell_colors = cell_colors
         self.grid = ColorGrid(grid_width, grid_height)
         self._max_figure_size = max(figure_types)
+        self.score = 0
         self.start_new_game()
 
     def start_new_game(self):

@@ -1,43 +1,5 @@
+# !/usr/bin/env python3
 from tkinter import Canvas
-
-
-def check_for_positive_integer(value, value_name="Value"):
-    if not isinstance(value, int):
-        raise TypeError(value_name + " must be integer!")
-    if value <= 0:
-        raise ValueError(value_name + " must be positive!")
-
-
-class ColorGrid:
-    def __init__(self, width, height):
-        check_for_positive_integer(width, "Width")
-        check_for_positive_integer(height, "Height")
-        self._width = width
-        self._height = height
-        self.grid = dict()
-        for x in range(width):
-            for y in range(height):
-                self.grid[(x, y)] = None
-
-    @property
-    def width(self):
-        return self._width
-
-    @property
-    def height(self):
-        return self._height
-
-    def is_line_full(self, line_number):
-        if not 0 <= line_number < self.height:
-            return False
-        for x in range(self.width):
-            if not self.grid[(x, line_number)]:
-                return False
-        return True
-
-    def clear(self):
-        for coords in self.grid:
-            self.grid[coords] = None
 
 
 class ResizableGridCanvas(Canvas):

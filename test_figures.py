@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 import unittest
-import figures
-import generated_figures
+
+from game import figures
+import game.generated_figures
 
 
 def is_iterable(obj):
@@ -143,19 +144,19 @@ class TestFigures(unittest.TestCase):
                                                     rotations_expected))
 
     def test_generated_figures_available(self):
-        for i in generated_figures.get_available_figure_sizes():
-            generated_figures.get_figures(i)
+        for i in game.generated_figures.get_available_figure_sizes():
+            game.generated_figures.get_figures(i)
 
     def test_generate_figures(self):
         figure_size = 5
-        expected = list(generated_figures.get_figures(figure_size))
+        expected = list(game.generated_figures.get_figures(figure_size))
         actual = list(figures.generate_figures_cleared(figure_size))
 
         self.assertTrue(is_iterables_equal_no_order(expected, actual))
 
     def test_generate_figures_wrong_size(self):
-        self.assertRaises(ValueError, generated_figures.get_figures, [-10])
-        self.assertRaises(ValueError, generated_figures.get_figures, [10])
+        self.assertRaises(ValueError, game.generated_figures.get_figures, [-10])
+        self.assertRaises(ValueError, game.generated_figures.get_figures, [10])
 
 
 class TestFigureClass(unittest.TestCase):

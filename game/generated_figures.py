@@ -1,4 +1,4 @@
-from figures import Figure
+from game.figures import Figure
 
 
 def get_available_figure_sizes():
