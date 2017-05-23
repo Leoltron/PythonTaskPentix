@@ -155,7 +155,8 @@ class TestFigures(unittest.TestCase):
         self.assertTrue(is_iterables_equal_no_order(expected, actual))
 
     def test_generate_figures_wrong_size(self):
-        self.assertRaises(ValueError, game.generated_figures.get_figures, [-10])
+        self.assertRaises(ValueError, game.generated_figures.get_figures,
+                          [-10])
         self.assertRaises(ValueError, game.generated_figures.get_figures, [10])
 
 
@@ -206,3 +207,7 @@ class TestFigureClass(unittest.TestCase):
 
         self.assertEqual(repr(figure1), "Figure({(0, 1), (1, 0), (1, 1)})")
         self.assertEqual(repr(figure2), "Figure({(2, 0), (1, 0), (0, 0)})")
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -234,7 +234,6 @@ class PentrixGame:
     def drop_current_figure(self):
         while self.try_move_down():
             pass
-        pass
 
     def summarize_figure_flight(self):
         if not self.check_for_loss():
