@@ -46,7 +46,7 @@ class ColorGrid:
             cell_color = self.grid[(x, line_number)]
             if not cell_color:
                 return False
-            if color != 'rainbow':
+            if cell_color != 'rainbow':
                 if color is None:
                     color = cell_color
                 elif color != cell_color:
@@ -123,7 +123,8 @@ class PentrixGame:
             self.current_figure_color = str(self.TIME_BOMB_TIME) + ":" + \
                                         random.choice(self.cell_colors)
         else:
-            if random.random() <= self.RAINBOW_PROBABILITY:
+            if self._color_lines_enabled and \
+                            random.random() <= self.RAINBOW_PROBABILITY:
                 self.current_figure_color = 'rainbow'
             else:
                 self.current_figure_color = random.choice(self.cell_colors)
@@ -158,8 +159,9 @@ class PentrixGame:
             self.current_figure_x += dx
             self.current_figure_y += dy
         elif is_eraser and dy > 0:
-            self.current_figure_color = self.current_figure_color.replace("*","")
-            self._try_replace(figure_coords,figure_coords)
+            self.current_figure_color = self.current_figure_color.replace("*",
+                                                                          "")
+            self._try_replace(figure_coords, figure_coords)
         return result
 
     def _try_replace(self, figure_coords,
@@ -199,7 +201,7 @@ class PentrixGame:
                 cleared_lines += 1
                 if self._color_lines_enabled and \
                         self.grid.is_line_full_same_color(line_y):
-                    cleared_lines += 1
+                    cleared_lines += 2
                 for x in range(self.grid.width):
                     self.grid.grid[(x, line_y)] = None
                 for y in range(line_y, 0, -1):
@@ -263,10 +265,10 @@ class PentrixGame:
         self.grid.grid[bomb_x, bomb_y] = None
         for x in range(-1, 2):
             for y in range(-1, 2):
-                if self.is_bomb(bomb_x+x, bomb_y+y):
-                    self.explode_at(bomb_x+x, bomb_y+y)
+                if self.is_bomb(bomb_x + x, bomb_y + y):
+                    self.explode_at(bomb_x + x, bomb_y + y)
                 else:
-                    self.grid.grid[bomb_x+x, bomb_y+y] = None
+                    self.grid.grid[bomb_x + x, bomb_y + y] = None
 
     def is_bomb(self, x, y):
         if not (0 <= x < self.grid.width and 0 <= y < self.grid.height):
