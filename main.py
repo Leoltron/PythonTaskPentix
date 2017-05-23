@@ -3,6 +3,7 @@ import argparse
 
 import sys
 
+import color_checker
 from game.generated_figures import get_available_figure_sizes
 from game.pentrix_game import PentrixGame
 from gui.gui_main import init_gui
@@ -21,6 +22,13 @@ def check_and_return_size(value, min_size, value_name="value"):
         return min_size
 
 
+def check_color(color):
+    is_color = color_checker.is_color(color)
+    if not is_color:
+        print("Error: {0} is not a color".format(color))
+    return is_color
+
+
 def main():
     if len(sys.argv) > 1:
         parsed_args = parse_args()
@@ -33,13 +41,21 @@ def main():
         min_size = max(figure_types) * 2
         try:
             width = check_and_return_size(parsed_args.width, min_size, "width")
-            height = check_and_return_size(parsed_args.height, min_size, "height")
+            height = check_and_return_size(parsed_args.height, min_size,
+                                           "height")
         except ValueError as e:
-            print("Error: "+(", ".join(e.args)))
+            print("Error: " + (", ".join(e.args)))
             return
 
         lines_color = parsed_args.lines_color
+        if not check_color(lines_color):
+            return
         bg_color = parsed_args.bg_color
+        if not check_color(bg_color):
+            return
+        for color in parsed_args.cells_colors:
+            if not check_color(color):
+                return
         game = PentrixGame(grid_width=width,
                            grid_height=height,
                            figure_types=figure_types,
