@@ -31,8 +31,12 @@ def main():
             figure_types = {5}
 
         min_size = max(figure_types) * 2
-        width = check_and_return_size(parsed_args.width, min_size, "width")
-        height = check_and_return_size(parsed_args.height, min_size, "height")
+        try:
+            width = check_and_return_size(parsed_args.width, min_size, "width")
+            height = check_and_return_size(parsed_args.height, min_size, "height")
+        except ValueError as e:
+            print("Error: "+(", ".join(e.args)))
+            return
 
         lines_color = parsed_args.lines_color
         bg_color = parsed_args.bg_color
@@ -40,7 +44,10 @@ def main():
                            grid_height=height,
                            figure_types=figure_types,
                            balance_types=parsed_args.balance_types,
-                           cell_colors=parsed_args.cells_colors)
+                           cell_colors=parsed_args.cells_colors,
+                           eraser_enabled=parsed_args.eraser,
+                           color_lines_enabled=parsed_args.color_lines,
+                           time_bomb_enabled=parsed_args.time_bomb)
     else:
         game = PentrixGame()
         lines_color = "white"
@@ -52,20 +59,34 @@ def parse_args():
     parse = argparse.ArgumentParser(description="Launch a Pentrix game")
     parse.add_argument("-f", "--figure_type",
                        type=int,
-                       action='append',
+                       nargs='+',
                        help="Add figure type by size",
                        dest='figure_types',
                        choices=get_available_figure_sizes())
     parse.add_argument("-w", "-W", "--width",
                        type=int,
-                       help="Game field grid width")
+                       help="Game field grid width (must not be less than "
+                            "2*<max figure size>)")
     parse.add_argument("-H", "--height",
                        type=int,
-                       help="Game field grid height")
+                       help="Game field grid height (must not be less than "
+                            "2*<max figure size>)")
     parse.add_argument("-b", "--balance_types",
                        action="store_true",
                        help="Figures of different sizes will have the equal "
                             "chance of appearance")
+    parse.add_argument("-e", "--eraser",
+                       action="store_true",
+                       help="Enabling eraser figure")
+    parse.add_argument("-t", "--time_bomb",
+                       action="store_true",
+                       help="Enabling time bombs")
+    parse.add_argument("-c", "--color_lines",
+                       action="store_true",
+                       help="You will get bonus points for creating a line "
+                            "which includes cells of the same color ("
+                            "+rainbow). Will be ignored if there's only 1 "
+                            "color")
     parse.add_argument("--cc", "--cells_colors",
                        type=str,
                        dest="cells_colors",

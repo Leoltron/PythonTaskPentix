@@ -22,6 +22,7 @@ def init_gui(game, bg_color, lines_color):
     def game_loop():
         game.loop()
         grid_canvas.redraw()
+        root.title('Pentrix - Score: '+str(game.score))
         root.after(1000, game_loop)
 
     game_loop()

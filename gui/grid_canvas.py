@@ -73,13 +73,82 @@ class ResizableGridCanvas(Canvas):
             y += 1 + self._cell_size
 
     def draw_cell(self, x, y, grid_x, grid_y):
+        color = self.grid.grid[(grid_x, grid_y)]
+        if color == 'rainbow':
+            self.draw_rainbow_cell(x, y)
+        elif color.startswith("*"):
+            self.draw_eraser(x, y, color[1:])
+        elif ":" in color:
+            splitted_color = color.split(":", 1)
+            self.draw_time_bomb(x, y, splitted_color[1],
+                                int(splitted_color[0]))
+        else:
+            self.draw_normal_cell(x, y, color)
+
+    def draw_normal_cell(self, x, y, color):
         self.create_rectangle(x, y,
                               x + self._cell_size,
                               y + self._cell_size,
-                              fill=self.grid.grid[(grid_x, grid_y)],
+                              fill=color,
                               outline="")
 
+    def draw_rainbow_cell(self, x, y):
+        a = self._cell_size / 4
+        self.draw_normal_cell(x, y, 'green')
+        self.create_polygon([x, y, x, y + a * 3, x + a * 3, y],
+                            fill="yellow", outline="")
+        self.create_polygon([x, y, x, y + a * 2, x + a * 2, y],
+                            fill="orange", outline="")
+        self.create_polygon([x, y, x, y + a, x + a, y], fill="red",
+                            outline="")
+        a *= -1
+        x += self._cell_size
+        y += self._cell_size
+        self.create_polygon([x, y, x, y + a * 3, x + a * 3, y],
+                            fill="cyan", outline="")
+        self.create_polygon([x, y, x, y + a * 2, x + a * 2, y],
+                            fill="blue", outline="")
+        self.create_polygon([x, y, x, y + a, x + a, y], fill="purple",
+                            outline="")
+
     def _draw_bg(self, color="black", alt_color="white"):
-        self.create_rectangle(0, 0, self.width, self.height, fill=alt_color)
+        self.create_rectangle(0, 0, self.width, self.height, fill=alt_color,
+                              outline="")
         self.create_rectangle(self._left, self._up, self._right, self._bottom,
-                              fill=color)
+                              fill=color,
+                              outline="")
+
+    ERASER_BORDER_WIDTH = 4
+
+    def draw_eraser(self, x, y, color):
+        hw = self.ERASER_BORDER_WIDTH / 2
+        self.create_rectangle(x + hw,
+                              y + hw,
+                              x + self._cell_size - hw,
+                              y + self._cell_size - hw,
+                              outline=color,
+                              width=str(self.ERASER_BORDER_WIDTH))
+
+    def draw_time_bomb(self, x, y, color, time):
+        c_x = x + self._cell_size / 2
+        c_y = y + self._cell_size / 2
+        if time >= 1:
+            self.create_polygon(
+                [c_x, y, c_x, c_y, x, c_y],
+                fill=color,
+                outline="")
+        if time >= 2:
+            self.create_polygon(
+                [c_x, y, c_x, c_y, x + self._cell_size, c_y],
+                fill=color,
+                outline="")
+        if time >= 3:
+            self.create_polygon(
+                [c_x, y + self._cell_size, c_x, c_y, x + self._cell_size, c_y],
+                fill=color,
+                outline="")
+        if time >= 4:
+            self.create_polygon(
+                [c_x, y + self._cell_size, c_x, c_y, x, c_y],
+                fill=color,
+                outline="")
