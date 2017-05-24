@@ -124,3 +124,6 @@ class TestPentrixGame(unittest.TestCase):
         self.assertTrue(game.try_rotate())
         self.assertTupleEqual((x, y + 1), (game.current_figure_x,
                                            game.current_figure_y))
+
+if __name__ == "__main__":
+    unittest.main()
